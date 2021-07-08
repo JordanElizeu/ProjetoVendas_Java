@@ -7,6 +7,8 @@ package br.com.projeto.view;
 
 import br.com.projeto.dao.ClientesDAO;
 import br.com.projeto.model.Clientes;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -20,6 +22,34 @@ public class JFrmCliente extends javax.swing.JFrame {
     public JFrmCliente() {
         initComponents();
     }
+    
+    public void listar(){
+        ClientesDAO dao = new ClientesDAO();
+        
+        List<Clientes> lista = dao.listarClientes();
+        DefaultTableModel dados = (DefaultTableModel) tbList.getModel();
+        dados.setNumRows(0);
+        
+        for (Clientes clientes : lista){
+            dados.addRow(new Object[]{
+                clientes.getId(),
+                clientes.getNome(),
+                clientes.getRg(),
+                clientes.getCpf(),
+                clientes.getEmail(),
+                clientes.getTelefone(),
+                clientes.getCelular(),
+                clientes.getCep(),
+                clientes.getEndereco(),
+                clientes.getNumero(),
+                clientes.getComplemento(),
+                clientes.getBairro(),
+                clientes.getCidade(),
+                clientes.getUf()
+            });
+            
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -31,10 +61,14 @@ public class JFrmCliente extends javax.swing.JFrame {
     private void initComponents() {
 
         jButton2 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList<>();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel3 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbList = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         cod = new javax.swing.JTextField();
@@ -72,7 +106,22 @@ public class JFrmCliente extends javax.swing.JFrame {
 
         jButton2.setText("jButton2");
 
+        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane1.setViewportView(jList1);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 255));
 
@@ -97,15 +146,32 @@ public class JFrmCliente extends javax.swing.JFrame {
                 .addGap(22, 22, 22))
         );
 
+        tbList.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Código", "Nome", "RG", "CPF", "Telefone", "Celular", "E-mail", "Cep", "Endereço", "Número", "Complemento", "Bairro", "Cidade", "UF"
+            }
+        ));
+        tbList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbListMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tbList);
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 805, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 805, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 291, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 6, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Pesquisar", jPanel3);
@@ -343,6 +409,11 @@ public class JFrmCliente extends javax.swing.JFrame {
         btn_editar.setText("Editar");
 
         btn_excluir.setText("Excluir");
+        btn_excluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_excluirActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -362,7 +433,7 @@ public class JFrmCliente extends javax.swing.JFrame {
                 .addComponent(btn_editar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_excluir)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(92, 266, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -399,7 +470,7 @@ public class JFrmCliente extends javax.swing.JFrame {
 
     private void btn_salvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_salvarActionPerformed
         Clientes cli = new Clientes();
-        
+
         cli.setNome(nametxt.getText());
         cli.setEmail(emailtxt.getText());
         cli.setCep(ceptxt.getText());
@@ -413,11 +484,11 @@ public class JFrmCliente extends javax.swing.JFrame {
         cli.setNumero(Integer.parseInt(numerotxt.getText()));
         cli.setComplemento(complementotxt.getText());
         cli.setUf(estadotxt.getSelectedItem().toString());
-        
+
         ClientesDAO dao = new ClientesDAO();
         dao.cadastrarClientes(cli);
-        
-        
+
+
     }//GEN-LAST:event_btn_salvarActionPerformed
 
     private void numerotxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numerotxtActionPerformed
@@ -427,6 +498,42 @@ public class JFrmCliente extends javax.swing.JFrame {
     private void nametxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nametxtActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_nametxtActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        listar();
+    }//GEN-LAST:event_formWindowOpened
+
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        listar();
+    }//GEN-LAST:event_formWindowActivated
+
+    private void tbListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbListMouseClicked
+        jTabbedPane1.setSelectedIndex(1);
+        cod.setText(tbList.getValueAt(tbList.getSelectedRow(), 0).toString());
+        nametxt.setText(tbList.getValueAt(tbList.getSelectedRow(), 1).toString());
+        rgtxt.setText(tbList.getValueAt(tbList.getSelectedRow(), 2).toString());
+        cpftxt.setText(tbList.getValueAt(tbList.getSelectedRow(), 3).toString());
+        emailtxt.setText(tbList.getValueAt(tbList.getSelectedRow(), 4).toString());
+        fixotxt.setText(tbList.getValueAt(tbList.getSelectedRow(), 5).toString());
+        celulartxt.setText(tbList.getValueAt(tbList.getSelectedRow(), 6).toString());
+        ceptxt.setText(tbList.getValueAt(tbList.getSelectedRow(), 7).toString());
+        enderecotxt.setText(tbList.getValueAt(tbList.getSelectedRow(), 8).toString());
+        numerotxt.setText(tbList.getValueAt(tbList.getSelectedRow(), 9).toString());
+        complementotxt.setText(tbList.getValueAt(tbList.getSelectedRow(), 10).toString());
+        bairrotxt.setText(tbList.getValueAt(tbList.getSelectedRow(), 11).toString());
+        cidadetxt.setText(tbList.getValueAt(tbList.getSelectedRow(), 12).toString());
+        estadotxt.setSelectedItem(tbList.getValueAt(tbList.getSelectedRow(), 13).toString());
+ 
+    }//GEN-LAST:event_tbListMouseClicked
+
+    private void btn_excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_excluirActionPerformed
+        Clientes cli = new Clientes();
+        cli.setId(Integer.parseInt(cod.getText()));
+        
+        ClientesDAO dao = new ClientesDAO();
+        
+        dao.excluirCliente(cli);
+    }//GEN-LAST:event_btn_excluirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -496,12 +603,17 @@ public class JFrmCliente extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField nametxt;
     private javax.swing.JTextField numerotxt;
     private javax.swing.JFormattedTextField rgtxt;
+    private javax.swing.JTable tbList;
     // End of variables declaration//GEN-END:variables
+
 }
