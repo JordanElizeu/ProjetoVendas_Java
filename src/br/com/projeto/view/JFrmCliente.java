@@ -7,6 +7,7 @@ package br.com.projeto.view;
 
 import br.com.projeto.dao.ClientesDAO;
 import br.com.projeto.model.Clientes;
+import br.com.projeto.model.Ultilitarios;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
@@ -22,6 +23,8 @@ public class JFrmCliente extends javax.swing.JFrame {
     public JFrmCliente() {
         initComponents();
     }
+    
+    Ultilitarios ultilitarios = new Ultilitarios();
     
     public void listar(){
         ClientesDAO dao = new ClientesDAO();
@@ -407,6 +410,11 @@ public class JFrmCliente extends javax.swing.JFrame {
         });
 
         btn_editar.setText("Editar");
+        btn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarActionPerformed(evt);
+            }
+        });
 
         btn_excluir.setText("Excluir");
         btn_excluir.addActionListener(new java.awt.event.ActionListener() {
@@ -465,7 +473,8 @@ public class JFrmCliente extends javax.swing.JFrame {
     }//GEN-LAST:event_estadotxtActionPerformed
 
     private void btn_novoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_novoActionPerformed
-        // TODO add your handling code here:
+
+        ultilitarios.limpaTela(jPanel2);
     }//GEN-LAST:event_btn_novoActionPerformed
 
     private void btn_salvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_salvarActionPerformed
@@ -487,6 +496,8 @@ public class JFrmCliente extends javax.swing.JFrame {
 
         ClientesDAO dao = new ClientesDAO();
         dao.cadastrarClientes(cli);
+        
+        ultilitarios.limpaTela(jPanel2);
 
 
     }//GEN-LAST:event_btn_salvarActionPerformed
@@ -533,7 +544,34 @@ public class JFrmCliente extends javax.swing.JFrame {
         ClientesDAO dao = new ClientesDAO();
         
         dao.excluirCliente(cli);
+        ultilitarios.limpaTela(jPanel2);
     }//GEN-LAST:event_btn_excluirActionPerformed
+
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+        Clientes cli = new Clientes();
+        
+        cli.setNome(nametxt.getText());
+        cli.setEmail(emailtxt.getText());
+        cli.setCelular(celulartxt.getText());
+        cli.setTelefone(fixotxt.getText());
+        cli.setCep(ceptxt.getText());
+        cli.setEndereco(enderecotxt.getText());
+        cli.setNumero(Integer.parseInt(numerotxt.getText()));
+        cli.setBairro(bairrotxt.getText());
+        cli.setCidade(cidadetxt.getText());
+        cli.setComplemento(complementotxt.getText());
+        cli.setUf(estadotxt.getSelectedItem().toString());
+        cli.setRg(rgtxt.getText());
+        cli.setCpf(cpftxt.getText());
+        
+        cli.setId(Integer.parseInt(cod.getText()));
+        
+        ClientesDAO dao = new ClientesDAO();
+        dao.alterarCliente(cli);
+        ultilitarios.limpaTela(jPanel2);
+        
+        
+    }//GEN-LAST:event_btn_editarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -569,6 +607,7 @@ public class JFrmCliente extends javax.swing.JFrame {
             }
         });
     }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField bairrotxt;
